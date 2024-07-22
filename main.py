@@ -7,7 +7,8 @@ task_template = {'id': '',
                 'task': '',
                 'description': '',
                 'start_date': '',
-                'deadline': ''}
+                'deadline': '',
+                 'priority': ''}
 
 task_list = []
 
@@ -29,9 +30,9 @@ year = int(date[-4:])
     #task_list.append(new_task)
 
 
-file_operations.create_to_do_txt()
-l = random.randint(1,10)
-file_operations.add_task_to_txt(l,l,l,l,l)
+#file_operations.create_to_do_txt()
+#file_operations.add_task_to_txt()
+file_operations.delete_task(2)
 
 
 # print(task_list)
