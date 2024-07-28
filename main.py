@@ -2,40 +2,37 @@ import file_operations
 import random
 import time
 from datetime import datetime
+import todo_class
 
-task_template = {'id': '',
-                'task': '',
-                'description': '',
-                'start_date': '',
-                'deadline': '',
-                 'priority': ''}
+todo_list = todo_class.List()
+#todo_list.create_list()
 
-task_list = []
+# todo_list.add_task()
+# todo_list.add_task()
+# for task in todo_list.get_list():
+#     print(task)
+#
+#
+# todo_list.delete_task(2)
+# print('po:\n')
+#
+# print('\nprzed:')
+# for task in todo_list.get_list():
+#     print(task)
+#
+file_operations.add_task_to_txt()
+file_operations.add_task_to_txt()
+file_operations.import_task_list_txt(todo_list)
+#
+# print('\npo:')
+# for task in todo_list.get_list():
+#     print(task)
+#
+# todo_list.add_task()
+#
+# print('\npo2:')
+# for task in todo_list.get_list():
+#     print(task)
 
-#print('podaj deadline zadania: ')
-date = datetime.today().strftime("%d.%m.%Y")
-day = int(date[:2])
-month = int(date[3:5])
-year = int(date[-4:])
-
-# date1 = datetime(year, month, day)
-# date2 = datetime(1939, 10, 25)
-# # print(date1-date2)
-# for i in range(3):
-#     new_task = task_template.copy()
-#     for task_details in new_task.keys():
-        #task[f'{task_details}'] = input(f'{task_details.title()}: ')
-        #new_task[f'{task_details}'] = random.randint(1,10)
-
-    #task_list.append(new_task)
-
-
-#file_operations.create_to_do_txt()
-#file_operations.add_task_to_txt()
-file_operations.delete_task(2)
-
-
-# print(task_list)
-# print(task_list[0])
-# print(task_list[1])
-# print(task_list[2])
+print(len(todo_list.get_list()))
+file_operations.export_task_list_txt(todo_list)
