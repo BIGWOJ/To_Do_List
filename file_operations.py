@@ -1,24 +1,25 @@
 import os, fnmatch, random, todo_class
 from datetime import datetime
 
-
-#Creating .txt file to keep all task together
-def create_to_do_txt():
-    if not os.path.isfile('To_do_list.txt'):
-        with open('To_do_list.txt', 'w') as todo_txt:
-            pass
-
 #Adding task to the .txt file
-def add_task_to_txt():
+def add_task_to_txt(new_task=None):
     with open('To_do_list.txt', 'a+') as todo_txt:
-        for task_details in todo_class.List.template.keys():
-            #Separating by | between details because on first thought commonly used comma (,) to do so, can be also used during description of tasks and it's
-            #getting harder to clearly read it and split in other part of the code
-            #todo_txt.write(f"{input(f'{task_details}: '.title())} | ")
-            todo_txt.write(f"{random.randint(1,10)} | ")
-        todo_txt.write('\n')
+        if new_task:
+            for task_detail in new_task.values():
+                todo_txt.write(f'{str(task_detail)} | ')
+            todo_txt.write('\n')
+            #details = [value.strip() for value in new_task.split("|") if value.strip()]
+            #todo_txt.write(str(new_task))
+            #print(details)
+        else:
+            for task_details in todo_class.List.template.keys():
+                #Separating by | between details because on first thought commonly used comma (,) to do so, can be also used during description of tasks and it's
+                #getting harder to clearly read it and split in other part of the code
+                #todo_txt.write(f"{input(f'{task_details}: '.title())} | ")
+                todo_txt.write(f'{random.randint(1,10)} | ')
+            todo_txt.write('\n')
 
-#Importing task list from .txt file
+#Importing task list from the .txt file
 def import_task_list_txt(main_todo_list):
     with open('To_do_list.txt', 'r') as todo_txt:
         tasks_number = todo_txt.readlines()
@@ -35,11 +36,7 @@ def import_task_list_txt(main_todo_list):
                 new_task[f'{key}'] = detail
             main_todo_list.add_task(new_task)
 
-def export_task_list_txt(main_todo_list):
-    with open('To_do_list.txt', 'w') as todo_txt:
-        tasks_number = len(main_todo_list.get_list())
-        todo_txt.write(str(tasks_number))
-
-
-
-
+#Może się przyda?
+def sort_task_list_txt(main_todo_list):
+    import_task_list_txt(main_todo_list)
+    pass
