@@ -8,9 +8,7 @@ def add_task_to_txt(new_task=None):
             for task_detail in new_task.values():
                 todo_txt.write(f'{str(task_detail)} | ')
             todo_txt.write('\n')
-            #details = [value.strip() for value in new_task.split("|") if value.strip()]
-            #todo_txt.write(str(new_task))
-            #print(details)
+
         else:
             for task_details in todo_class.List.template.keys():
                 #Separating by | between details because on first thought commonly used comma (,) to do so, can be also used during description of tasks and it's
@@ -24,17 +22,19 @@ def import_task_list_txt(main_todo_list):
     with open('To_do_list.txt', 'r') as todo_txt:
         tasks_number = todo_txt.readlines()
 
-        #Setting file pointer on start was needed cause of .readlines() method usage which placed pointer at the end of the file
+        #Setting file pointer back on start was needed cause of .readlines() method usage which placed pointer at the end of the file
         todo_txt.seek(0)
         imported_txt = todo_txt.read()
         imported_tasks = [value.strip() for value in imported_txt.split("|") if value.strip()]
 
         for task_number in range(len(tasks_number)):
             new_task = todo_class.List.template.copy()
+            #Task details read by read() method return concatenated list of all values from dictionary of task
+            #Hence values separation of each task was needed based on length (numbers) of keys in it
             current_task = imported_tasks[len(new_task)*task_number : len(new_task)*(task_number+1)]
             for key, detail in zip(new_task.keys(), current_task):
                 new_task[f'{key}'] = detail
-            main_todo_list.add_task(new_task)
+            main_todo_list.add_task(new_task, imported_task=True)
 
 #Może się przyda?
 def sort_task_list_txt(main_todo_list):

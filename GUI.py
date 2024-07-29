@@ -1,12 +1,15 @@
 import file_operations, todo_class
 import sys
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QInputDialog, QMessageBox, QFileDialog, QLabel, QApplication
+
 class GUI_buttons(QWidget):
     standard_font_size = 16
-    def __init__(self):
+    def __init__(self, main_task_list):
         super().__init__()
         self.buttons()
+        self.main_task_list = main_task_list
 
+    #Creating UI buttons and connecting them with functions
     def buttons(self):
         self.add_task_button = QPushButton("Add task", self)
         self.add_task_button.clicked.connect(self.add_task)
@@ -26,32 +29,49 @@ class GUI_buttons(QWidget):
         self.resize(250,250)
         self.setWindowTitle("TDL v1.0")
 
+#Adding new task
     def add_task(self):
-        #print('asd')
         window = QWidget()
         window_layout = QVBoxLayout(window)
         window.setStyleSheet(f'font: {GUI_buttons.standard_font_size}px')
-        price, _ = QInputDialog.getDouble(window, " ",
-                                          f"\nEnter the price of:", decimals=2)
-        # for task_detail in todo_class.List.template.keys():
-        #     #new_task[f'{task_detail}'] = QInputDialog(window, f'{task_detail}'.title())
-        #     a,_ = QInputDialog.getDouble(window, f'{task_detail}'.title())
-        #     print(a)
 
-        #todo_class.List.add_task()
-        # return
+        #Creating task template copy to be able to fill it with new details without changing template
+        new_task = todo_class.List.template.copy()
 
+        for task_detail in todo_class.List.template.keys():
+            new_task[f'{task_detail}'] = QInputDialog.getText(window, "", f"{task_detail.title().replace('_',' ')}:")[0]
+
+        #Adding created task to the list
+        self.main_task_list.add_task(new_task)
+
+#Showing all tasks
     def show_tasks(self):
-        pass
+        window = QWidget()
+        window_layout = QVBoxLayout(window)
+        window.setStyleSheet(f'font: {GUI_buttons.standard_font_size}px')
 
+        #Checking if there is any task in the list, if not -> import tasks from .txt file
+        if len(self.main_task_list.get_list()) == 0:
+            file_operations.import_task_list_txt(self.main_task_list)
+
+        #If still there is no task (in .txt file wasn't any task as well) -> pop-up message
+        if len(self.main_task_list.get_list()) == 0:
+            QMessageBox.information(None, " ", "You have no tasks to do!")
+
+        #Otherwise (there are any task) -> listing them
+        else:
+            task_details = "\n\n".join([f"ID: {task['id']}, Task: {task['task']}, Description: {task['description']}, "
+                                        f"Start date: {task['start_date']}, Deadline: {task['deadline']}, Priority: {task['priority']}" for task in self.main_task_list.get_list()])
+            QMessageBox.information(QWidget(), '', f'{task_details}')
+
+#Function to exit application
     def exit_app(self):
         exit(0)
 
-
-def app_exec():
+def app_exec(main_task_list):
     app = QApplication(sys.argv)
     # Manually checked the RGB color of logo background
-    logo_background_color = (37, 37, 37)
+    logo_background_color = (40, 40, 40)
 
     # QPushButton like "OK" "Cancel"
     # GUI_buttons QPushButton - import file and exit app
@@ -83,6 +103,6 @@ def app_exec():
         }}
         """)
 
-    main_window = GUI_buttons()
+    main_window = GUI_buttons(main_task_list)
     main_window.show()
     app.exec_()
