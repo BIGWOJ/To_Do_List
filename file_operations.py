@@ -19,22 +19,27 @@ def add_task_to_txt(new_task=None):
 
 #Importing task list from the .txt file
 def import_task_list_txt(main_todo_list):
-    with open('To_do_list.txt', 'r') as todo_txt:
-        tasks_number = todo_txt.readlines()
+    #Try to open .txt file
+    try:
+        with open('To_do_list.txt', 'r') as todo_txt:
+            tasks_number = todo_txt.readlines()
 
-        #Setting file pointer back on start was needed cause of .readlines() method usage which placed pointer at the end of the file
-        todo_txt.seek(0)
-        imported_txt = todo_txt.read()
-        imported_tasks = [value.strip() for value in imported_txt.split("|") if value.strip()]
+            #Setting file pointer back on start was needed cause of .readlines() method usage which placed pointer at the end of the file
+            todo_txt.seek(0)
+            imported_txt = todo_txt.read()
+            imported_tasks = [value.strip() for value in imported_txt.split("|") if value.strip()]
 
-        for task_number in range(len(tasks_number)):
-            new_task = todo_class.List.template.copy()
-            #Task details read by read() method return concatenated list of all values from dictionary of task
-            #Hence values separation of each task was needed based on length (numbers) of keys in it
-            current_task = imported_tasks[len(new_task)*task_number : len(new_task)*(task_number+1)]
-            for key, detail in zip(new_task.keys(), current_task):
-                new_task[f'{key}'] = detail
-            main_todo_list.add_task(new_task, imported_task=True)
+            for task_number in range(len(tasks_number)):
+                new_task = todo_class.List.template.copy()
+                #Task details read by read() method return concatenated list of all values from dictionary of task
+                #Hence values separation of each task was needed based on length (numbers) of keys in it
+                current_task = imported_tasks[len(new_task)*task_number : len(new_task)*(task_number+1)]
+                for key, detail in zip(new_task.keys(), current_task):
+                    new_task[f'{key}'] = detail
+                main_todo_list.add_task(new_task, imported_task=True)
+    #If opening .txt file was unsuccessful -> continue application
+    except FileNotFoundError:
+        pass
 
 #Może się przyda?
 def sort_task_list_txt(main_todo_list):

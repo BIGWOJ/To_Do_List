@@ -48,7 +48,7 @@ class GUI_buttons(QWidget):
     def show_tasks(self):
         window = QWidget()
         window_layout = QVBoxLayout(window)
-        window.setStyleSheet(f'font: {GUI_buttons.standard_font_size}px')
+        window.setStyleSheet('color: blue')
 
         #Checking if there is any task in the list, if not -> import tasks from .txt file
         if len(self.main_task_list.get_list()) == 0:
@@ -60,9 +60,13 @@ class GUI_buttons(QWidget):
 
         #Otherwise (there are any task) -> listing them
         else:
-            task_details = "\n\n".join([f"ID: {task['id']}, Task: {task['task']}, Description: {task['description']}, "
-                                        f"Start date: {task['start_date']}, Deadline: {task['deadline']}, Priority: {task['priority']}" for task in self.main_task_list.get_list()])
-            QMessageBox.information(QWidget(), '', f'{task_details}')
+            tasks_details = "\n\n".join([f"ID: {task['id']}, Task: {task['task']}, Description: {task['description']}, "
+                                        f"Start date: {task['start_date']}, Deadline: {task['deadline']}, Priority: {task['priority']}"
+                                        for task in self.main_task_list.get_list()])
+            #tasks = self.main_task_list.get_list()
+            #task_details = "<br><br>".join(["<p style="])
+            #tasks_details = [f"\n\n{key.title().replace('_', ' ')}: {task[key]}" for task in self.main_task_list.get_list() for key in todo_class.List.template.keys()]
+            QMessageBox.information(QWidget(), '', f'{tasks_details}')
 
 #Function to exit application
     def exit_app(self):
@@ -77,6 +81,7 @@ def app_exec(main_task_list):
     # GUI_buttons QPushButton - import file and exit app
     app.setStyleSheet(f"""
         QWidget {{
+            font: {GUI_buttons.standard_font_size}px;
             color: lightgray;
             background-color: rgb({logo_background_color[0]}, {logo_background_color[1]}, {logo_background_color[2]})
         }}
