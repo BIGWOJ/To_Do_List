@@ -2,11 +2,9 @@ import todo_class, GUI
 
 ##################
 #####
-##### W show_tasks() zrobić tak, żeby pierwsze 3 zadania miały kolory -> 1. czerwony, drugi mniej czerwony, trzeci najmniej ->
-##### żeby wiedzieć, które jest najważniejsze do zrobienia
+##### show_tasks() działa jak chciałem, ale jeszcze zrozumieć i okomentować dobrze ten kod -> dużo z html jest
 #####
-##### W show_tasks() spróbować zrobić to przy pomocy wypisywania klucz i ich wartości a nie ręcznie task['id'] itd
-#####
+##### dokończyć delete_task()
 #####
 ##################
 

@@ -25,9 +25,10 @@ class List:
         if not imported_task:
             file_operations.add_task_to_txt(new_task)
 
-    #Deleting task based on id
-    def delete_task(self, id):
-        self.task_list = [task for task in self.task_list if task['id'] != str(id)]
+    #Deleting task based on ID
+    def delete_task(self, task_id):
+        tasks_numbers = task_id.split(',')
+        self.task_list = [task for task in self.task_list if task['id'] not in tasks_numbers]
 
     #Sorting function based on different conditions
     def sort_list(self, condition='priority'):

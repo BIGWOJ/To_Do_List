@@ -8,11 +8,15 @@ class GUI_buttons(QWidget):
         super().__init__()
         self.buttons()
         self.main_task_list = main_task_list
+        file_operations.import_task_list_txt(self.main_task_list)
 
     #Creating UI buttons and connecting them with functions
     def buttons(self):
         self.add_task_button = QPushButton("Add task", self)
         self.add_task_button.clicked.connect(self.add_task)
+
+        self.delete_task_button = QPushButton("Delete task", self)
+        self.delete_task_button.clicked.connect(self.delete_task)
 
         self.show_tasks_button = QPushButton("Show tasks", self)
         self.show_tasks_button.clicked.connect(self.show_tasks)
@@ -22,6 +26,7 @@ class GUI_buttons(QWidget):
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.add_task_button)
+        layout.addWidget(self.delete_task_button)
         layout.addWidget(self.show_tasks_button)
         layout.addWidget(self.exit_app_button)
 
@@ -46,27 +51,47 @@ class GUI_buttons(QWidget):
 
 #Showing all tasks
     def show_tasks(self):
-        window = QWidget()
-        window_layout = QVBoxLayout(window)
-        window.setStyleSheet('color: blue')
-
         #Checking if there is any task in the list, if not -> import tasks from .txt file
-        if len(self.main_task_list.get_list()) == 0:
-            file_operations.import_task_list_txt(self.main_task_list)
+        # if len(self.main_task_list.get_list()) == 0:
+        #     file_operations.import_task_list_txt(self.main_task_list)
 
         #If still there is no task (in .txt file wasn't any task as well) -> pop-up message
         if len(self.main_task_list.get_list()) == 0:
-            QMessageBox.information(None, " ", "You have no tasks to do!")
+            QMessageBox.information(None, "", "You have no tasks to do!")
 
         #Otherwise (there are any task) -> listing them
         else:
-            tasks_details = "\n\n".join([f"ID: {task['id']}, Task: {task['task']}, Description: {task['description']}, "
-                                        f"Start date: {task['start_date']}, Deadline: {task['deadline']}, Priority: {task['priority']}"
-                                        for task in self.main_task_list.get_list()])
-            #tasks = self.main_task_list.get_list()
-            #task_details = "<br><br>".join(["<p style="])
-            #tasks_details = [f"\n\n{key.title().replace('_', ' ')}: {task[key]}" for task in self.main_task_list.get_list() for key in todo_class.List.template.keys()]
-            QMessageBox.information(QWidget(), '', f'{tasks_details}')
+            tasks_details_list = []
+            for index, task in enumerate(self.main_task_list.get_list()):
+                if index == 0:
+                    font_color = 'rgb(255, 50, 10)'
+                elif index == 1:
+                    font_color = 'rgb(200, 50, 10)'
+                elif index == 2:
+                    font_color = 'rgb(175, 50, 10)'
+                else:
+                    font_color = 'lightgray'
+                task_details = " ".join([f"{key.title().replace('_', ' ')}: {task[key]}" for key in todo_class.List.template.keys()])
+                tasks_details_list.append(f"<p style='color: {font_color};'>{task_details}</p>")
+                task_details_html = "<p>".join(tasks_details_list)
+            QMessageBox.information(QWidget(), '', f'{task_details_html}')
+
+    def delete_task(self):
+        window = QWidget()
+        window_layout = QVBoxLayout(window)
+        window.setStyleSheet(f'font: {GUI_buttons.standard_font_size}px')
+        task_id = QInputDialog.getText(window, '', f"Enter task ID:\n**Separated with comma with few IDs**")[0]
+        current_tasks_number = len(self.main_task_list.get_list())
+        todo_class.List.delete_task(self.main_task_list, task_id)
+
+        if current_tasks_number != len(self.main_task_list.get_list()):
+            if current_tasks_number - len(self.main_task_list.get_list()) != 1:
+                QMessageBox.information(QWidget(), '', f'Task IDs: {task_id} deleted successfully')
+            else:
+                QMessageBox.information(QWidget(), '', f'Task ID: {task_id} deleted successfully')
+
+        else:
+            QMessageBox.information(QWidget(), '', f"Task ID: {task_id} wasn't found")
 
 #Function to exit application
     def exit_app(self):
@@ -78,7 +103,7 @@ def app_exec(main_task_list):
     logo_background_color = (40, 40, 40)
 
     # QPushButton like "OK" "Cancel"
-    # GUI_buttons QPushButton - import file and exit app
+    # GUI_buttons QPushButton - exit app
     app.setStyleSheet(f"""
         QWidget {{
             font: {GUI_buttons.standard_font_size}px;
