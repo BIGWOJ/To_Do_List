@@ -89,6 +89,7 @@ class GUI_buttons(QWidget):
                 QMessageBox.information(QWidget(), '', f'Task IDs: {task_id} deleted successfully')
             else:
                 QMessageBox.information(QWidget(), '', f'Task ID: {task_id} deleted successfully')
+            file_operations.update_txt(self.main_task_list)
 
         else:
             QMessageBox.information(QWidget(), '', f"Task ID: {task_id} wasn't found")

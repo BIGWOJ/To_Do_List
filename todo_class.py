@@ -39,3 +39,5 @@ class List:
                 return self.task_list.sort(key=lambda x: datetime.strptime(x['start_date'], '%d.%m.%Y'))
             case 'deadline':
                 return self.task_list.sort(key=lambda x: datetime.strptime(x['deadline'], '%d.%m.%Y'))
+
+
