@@ -1,6 +1,31 @@
 import file_operations, todo_class
 import sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QInputDialog, QMessageBox, QFileDialog, QLabel, QApplication
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QInputDialog, QMessageBox, QFileDialog, QLabel, QApplication, QDialog, QRadioButton
+
+class SelectionWindow(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        #self.setGeometry(100,100,300,200)
+        self.setWindowTitle('Sorting condition')
+
+        layout = QVBoxLayout()
+        self.options = ['priority', 'start_date', 'deadline']
+        self.option_1 = QRadioButton("Priority")
+        self.option_2 = QRadioButton("Start date")
+        self.option_3 = QRadioButton("Deadline")
+        layout.addWidget(self.option_1)
+        layout.addWidget(self.option_2)
+        layout.addWidget(self.option_3)
+
+        self.select_button = QPushButton('Select')
+        self.select_button.clicked.connect(self.accept)
+        layout.addWidget(self.select_button)
+        self.setLayout(layout)
+
+    def get_options(self):
+        return self.opt
+    def option_selected(self):
+        return self.option_1.isChecked(),self.option_2.isChecked(),self.option_3.isChecked()
 
 class GUI_buttons(QWidget):
     standard_font_size = 16
@@ -15,19 +40,23 @@ class GUI_buttons(QWidget):
         self.add_task_button = QPushButton("Add task", self)
         self.add_task_button.clicked.connect(self.add_task)
 
-        self.delete_task_button = QPushButton("Delete task", self)
-        self.delete_task_button.clicked.connect(self.delete_task)
+        self.delete_tasks_button = QPushButton("Delete tasks", self)
+        self.delete_tasks_button.clicked.connect(self.delete_tasks)
 
         self.show_tasks_button = QPushButton("Show tasks", self)
         self.show_tasks_button.clicked.connect(self.show_tasks)
+
+        self.sort_tasks_button = QPushButton("Sort tasks", self)
+        self.sort_tasks_button.clicked.connect(self.sort_tasks)
 
         self.exit_app_button = QPushButton("Exit application", self)
         self.exit_app_button.clicked.connect(self.exit_app)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.add_task_button)
-        layout.addWidget(self.delete_task_button)
+        layout.addWidget(self.delete_tasks_button)
         layout.addWidget(self.show_tasks_button)
+        layout.addWidget(self.sort_tasks_button)
         layout.addWidget(self.exit_app_button)
 
         self.setLayout(layout)
@@ -71,26 +100,43 @@ class GUI_buttons(QWidget):
                     font_color = 'rgb(175, 50, 10)'
                 else:
                     font_color = 'lightgray'
+
                 task_details = " ".join([f"{key.title().replace('_', ' ')}: {task[key]}" for key in todo_class.List.template.keys()])
                 tasks_details_list.append(f"<p style='color: {font_color};'>{task_details}</p>")
                 task_details_html = "<p>".join(tasks_details_list)
             QMessageBox.information(QWidget(), '', f'{task_details_html}')
+            # Sorting list before printing tasks
+            todo_class.List.sort_list(self.main_task_list)
+            # Updating .txt file after sorting
+            file_operations.update_txt(self.main_task_list)
+    def sort_tasks(self):
+        sorting_conditions = SelectionWindow()
+        sorting_conditions.exec()
+        sorting_condition_index = sorting_conditions.option_selected().index(True)
+        sorting_condition = sorting_conditions.options[sorting_condition_index]
+        #print(sorting_condition)
+        #print(type(sorting_condition))
+        todo_class.List.sort_list(self.main_task_list, condition='deadline')
 
-    def delete_task(self):
+    def delete_tasks(self):
         window = QWidget()
         window_layout = QVBoxLayout(window)
         window.setStyleSheet(f'font: {GUI_buttons.standard_font_size}px')
-        task_id = QInputDialog.getText(window, '', f"Enter task ID:\n**Separated with comma with few IDs**")[0]
+        task_id = QInputDialog.getText(window, '', f"Enter task ID:\n**Separated with comma with few IDs**\n'all' to delete all tasks")[0]
         current_tasks_number = len(self.main_task_list.get_list())
-        todo_class.List.delete_task(self.main_task_list, task_id)
 
+        try: todo_class.List.delete_task(self.main_task_list, task_id)
+        # Using .lower() to secure all variants of writing word 'all', like 'All', 'aLl' etc...
+        except task_id.lower() == 'all':
+            file_operations.delete_all_tasks(self.main_task_list)
+
+        #print(task_id)
         if current_tasks_number != len(self.main_task_list.get_list()):
             if current_tasks_number - len(self.main_task_list.get_list()) != 1:
                 QMessageBox.information(QWidget(), '', f'Task IDs: {task_id} deleted successfully')
             else:
                 QMessageBox.information(QWidget(), '', f'Task ID: {task_id} deleted successfully')
             file_operations.update_txt(self.main_task_list)
-
         else:
             QMessageBox.information(QWidget(), '', f"Task ID: {task_id} wasn't found")
 

@@ -53,15 +53,19 @@ def update_txt(main_task_list):
         #Number of tasks in .txt file
         txt_tasks_number = len(todo_txt.readlines())
         #Rewriting .txt file to update tasks in it
-        if list_tasks_number != txt_tasks_number:
-            for task in main_task_list.get_list():
-                for task_detail in todo_class.List.template.keys():
-                    # print(task)
-                    # print(task_detail[])
-                    todo_txt.write(f'{str(task[task_detail])} | ')
-                todo_txt.write('\n')
+        #if list_tasks_number != txt_tasks_number:
+        for task in main_task_list.get_list():
+            for task_detail in todo_class.List.template.keys():
+                # print(task)
+                # print(task_detail[])
+                todo_txt.write(f'{str(task[task_detail])} | ')
+            todo_txt.write('\n')
 
-def erase_tasks(main_todo_list):
+#Deleting all tasks from .txt file
+def delete_all_tasks(main_task_list):
     with open('To_do_list.txt', 'w') as todo_txt:
-        pass
+        todo_txt.truncate(0)
+
+        todo_class.List.delete_list(main_task_list)
+
 

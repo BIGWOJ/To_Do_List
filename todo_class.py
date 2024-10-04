@@ -17,6 +17,11 @@ class List:
     def get_list(self):
         return self.task_list
 
+    def delete_list(self):
+        print('a')
+        self.task_list = []
+        print('b')
+
     #Adding task to the list
     def add_task(self, new_task, imported_task=False):
         self.task_list.append(new_task)
@@ -32,12 +37,11 @@ class List:
 
     #Sorting function based on different conditions
     def sort_list(self, condition='priority'):
+        #print(condition)
         match condition:
             case 'priority':
-                return self.task_list.sort(key=lambda x: int(x['priority']))
+                self.task_list.sort(key=lambda x: int(x['priority']))
             case 'start_date':
-                return self.task_list.sort(key=lambda x: datetime.strptime(x['start_date'], '%d.%m.%Y'))
+                self.task_list.sort(key=lambda x: datetime.strptime(x['start_date'], '%d.%m.%Y'))
             case 'deadline':
-                return self.task_list.sort(key=lambda x: datetime.strptime(x['deadline'], '%d.%m.%Y'))
-
-
+                self.task_list.sort(key=lambda x: datetime.strptime(x['deadline'], '%d.%m.%Y'))
