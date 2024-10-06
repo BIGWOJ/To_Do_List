@@ -36,7 +36,6 @@ class List:
 
     #Sorting function based on different conditions
     def sort_list(self, condition='priority'):
-        print(condition,'aaaa')
         match condition:
             case 'priority':
                 self.task_list.sort(key=lambda x: int(x['priority']))

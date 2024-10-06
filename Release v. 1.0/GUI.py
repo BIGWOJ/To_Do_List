@@ -74,7 +74,11 @@ class GUI_buttons(QWidget):
         new_task = todo_class.List.template.copy()
 
         for task_detail in todo_class.List.template.keys():
-            new_task[f'{task_detail}'] = QInputDialog.getText(window, "", f"{task_detail.title().replace('_',' ')}:")[0]
+            if task_detail == 'id':
+                #Adding 1 to secure ID starting from 0, not 1
+                new_task[f'{task_detail}'] = len(self.main_task_list.get_list())+1
+            else:
+                new_task[f'{task_detail}'] = QInputDialog.getText(window, "", f"{task_detail.title().replace('_',' ')}:")[0]
 
         #Adding created task to the list
         self.main_task_list.add_task(new_task)

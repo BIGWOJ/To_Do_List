@@ -43,8 +43,6 @@ def update_txt(main_task_list):
         #if list_tasks_number != txt_tasks_number:
         for task in main_task_list.get_list():
             for task_detail in todo_class.List.template.keys():
-                # print(task)
-                # print(task_detail[])
                 todo_txt.write(f'{str(task[task_detail])} | ')
             todo_txt.write('\n')
 
